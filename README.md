@@ -124,34 +124,6 @@ Anchors older than 24 hours are automatically filtered out when fetching.
 - Semi-transparent materials to avoid obscuring AR content
 - Vertical offset to prevent z-fighting with ground
 
-## Troubleshooting
-
-### Pods Not Found
-
-Make sure you opened the `.xcworkspace` file, not `.xcodeproj`:
-
-```bash
-open PersistentCloudAnchorExample.xcworkspace
-```
-
-### Firebase Connection Issues
-
-- Verify `GoogleService-Info.plist` is properly added to the project
-- Check that Realtime Database is created and rules allow read/write
-- Ensure your iOS bundle ID matches the Firebase app configuration
-
-### ARCore Errors
-
-- Verify ARCore API is enabled in Google Cloud Console
-- Check that API key has proper iOS app restrictions
-- Test on a physical device (ARKit doesn't work in simulator)
-
-### Lines Not Appearing
-
-- Make sure you've resolved at least 2 anchors
-- Tap "Draw Lines" button (not just "Resolve")
-- Check that `drawLines` flag is properly passed to `resolveButtonPressed()`
-
 ## Android Companion App
 
 A companion Android app is available here:
