@@ -23,8 +23,13 @@ import FirebaseDatabase
 /// Model object for hosting and resolving Cloud Anchors.
 class CloudAnchorManager: ObservableObject {
   private enum Constants {
-    /// Fill in your own API Key here.
-    static let apiKey = "AIzaSyAHkjuZ5oaG0l9yhODaePcS06wF2kfmz7Y"
+    /// API Key loaded from Info.plist
+    static let apiKey: String = {
+      guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "GARAPIKey") as? String else {
+        fatalError("GARAPIKey not found in Info.plist")
+      }
+      return apiKey
+    }()
     /// User defaults key for storing anchor creation timestamps.
     static let timeDictionaryUserDefaultsKey = "NicknameTimeStampDictionary"
     /// User defaults key for storing anchor IDs.

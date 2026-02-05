@@ -41,6 +41,7 @@
 		3ED8A6632C3613C600871808 /* AnchorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorInfo.swift; sourceTree = "<group>"; };
 		3FFE4DFF09D9DD5EE4CCBCC8 /* Pods_PersistentCloudAnchorExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PersistentCloudAnchorExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5295E97645F711864C9B0528 /* Pods-PersistentCloudAnchorExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersistentCloudAnchorExample.debug.xcconfig"; path = "Target Support Files/Pods-PersistentCloudAnchorExample/Pods-PersistentCloudAnchorExample.debug.xcconfig"; sourceTree = "<group>"; };
+		80BEF7B82F351E7E00D6C5B5 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		80D2F6F92F34235A000D2AB8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		80DDA0412F34414400E3E252 /* LineRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineRenderer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +70,7 @@
 				3ED8A6402C3322A900871808 /* Products */,
 				5AED2F7596021DA0B1CD6F31 /* Pods */,
 				49FCFEDA0A30B7D112C7F8BE /* Frameworks */,
+				80BEF7B82F351E7E00D6C5B5 /* Secrets.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -276,6 +278,7 @@
 /* Begin XCBuildConfiguration section */
 		3ED8A64B2C3322AA00871808 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80BEF7B82F351E7E00D6C5B5 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -339,6 +342,7 @@
 		};
 		3ED8A64C2C3322AA00871808 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80BEF7B82F351E7E00D6C5B5 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

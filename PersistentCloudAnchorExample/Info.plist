@@ -44,5 +44,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>GARAPIKey</key>
+	<string>$(GAR_API_KEY)</string>
 </dict>
 </plist>
