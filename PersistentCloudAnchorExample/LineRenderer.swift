@@ -34,7 +34,7 @@ class LineRenderer {
   private let arrowLength: Float = 0.20  // chevron length - longer
   private let arrowThickness: Float = 0.08  // arrow line thickness - thicker
   private let arrowHeight: Float = 0.01  // arrow height - very thin to appear flat
-  private let arrowVerticalOffset: Float = 0.005  // lift arrows above line
+  private let arrowVerticalOffset: Float = 0.015  // lift arrows above line to prevent cutting into it
   
   init(parent: Entity) {
     self.parentEntity = parent

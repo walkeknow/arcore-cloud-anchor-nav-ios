@@ -40,6 +40,7 @@ struct ARViewContainer: UIViewRepresentable {
     private let worldOrigin = AnchorEntity(world: matrix_identity_float4x4)
     private var planeModels: [UUID: ModelEntity] = [:]
     private var resolvedModels: [UUID: Entity] = [:]
+    private var anchorResolutionOrder: [UUID] = []  // Track order of anchor resolution
     private var hostedAnchorId: UUID?
     private var hostedModel: Entity?
     private var qualityIndicator: QualityIndicator?
@@ -129,16 +130,21 @@ struct ARViewContainer: UIViewRepresentable {
         }
         guard let model = Coordinator.createCloudAnchorModel() else { continue }
         resolvedModels[garAnchor.identifier] = model
+        anchorResolutionOrder.append(garAnchor.identifier)  // Track the order
         model.transform = Transform(matrix: garAnchor.transform)
         worldOrigin.addChild(model)
       }
       
       // Draw lines between resolved anchors if enabled
       if manager.drawLines && resolvedModels.count >= 2 {
-        let anchorPoints = resolvedModels.values.map { entity in
-          entity.position(relativeTo: nil)
+        // Get anchor points in the order they were resolved
+        let anchorPoints = anchorResolutionOrder.compactMap { uuid -> SIMD3<Float>? in
+          guard let model = resolvedModels[uuid] else { return nil }
+          return model.position(relativeTo: nil)
         }
-        lineRenderer?.updateLines(points: anchorPoints)
+        if anchorPoints.count >= 2 {
+          lineRenderer?.updateLines(points: anchorPoints)
+        }
       } else {
         lineRenderer?.clearLines()
       }

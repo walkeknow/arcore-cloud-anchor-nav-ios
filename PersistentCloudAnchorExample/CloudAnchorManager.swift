@@ -64,7 +64,7 @@ class CloudAnchorManager: ObservableObject {
   var isOnHorizontalPlane: Bool = false
   private var hostFuture: GARHostCloudAnchorFuture?
 
-  private var resolvedAnchorIds: [String] = []
+  var resolvedAnchorIds: [String] = []
   private var resolveFutures: [GARResolveCloudAnchorFuture] = []
 
   var garSession: GARSession?
