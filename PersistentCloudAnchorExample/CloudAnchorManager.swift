@@ -58,6 +58,7 @@ class CloudAnchorManager: ObservableObject {
   @Published var anchorNameDialogField = ""
   @Published var messageLabel = ""
   @Published var debugLabel = ""
+  @Published var drawLines = false
 
   private var placedAnchor: Bool = false
   var isOnHorizontalPlane: Bool = false
@@ -233,8 +234,10 @@ class CloudAnchorManager: ObservableObject {
   /// notice.
   ///
   /// - Parameter anchorIds: The list of anchor IDs to resolve.
-  func resolveButtonPressed(anchorIds: [String]) {
+  /// - Parameter drawLines: Whether to draw lines between resolved anchors.
+  func resolveButtonPressed(anchorIds: [String], drawLines: Bool = false) {
     resolvedAnchorIds = anchorIds
+    self.drawLines = drawLines
     checkPrivacyNotice()
   }
 

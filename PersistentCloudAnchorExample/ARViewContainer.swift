@@ -44,12 +44,14 @@ struct ARViewContainer: UIViewRepresentable {
     private var hostedModel: Entity?
     private var qualityIndicator: QualityIndicator?
     private var startedHosting: Bool = false
+    private var lineRenderer: LineRenderer?
 
     fileprivate init(manager: CloudAnchorManager) {
       self.manager = manager
       super.init()
       arView.scene.addAnchor(worldOrigin)
       arView.session.delegate = self
+      lineRenderer = LineRenderer(parent: worldOrigin)
       manager.startSession(arView: arView)
     }
 
@@ -129,6 +131,16 @@ struct ARViewContainer: UIViewRepresentable {
         resolvedModels[garAnchor.identifier] = model
         model.transform = Transform(matrix: garAnchor.transform)
         worldOrigin.addChild(model)
+      }
+      
+      // Draw lines between resolved anchors if enabled
+      if manager.drawLines && resolvedModels.count >= 2 {
+        let anchorPoints = resolvedModels.values.map { entity in
+          entity.position(relativeTo: nil)
+        }
+        lineRenderer?.updateLines(points: anchorPoints)
+      } else {
+        lineRenderer?.clearLines()
       }
 
       guard !startedHosting, frame.camera.trackingState == .normal, let hostedAnchorId,

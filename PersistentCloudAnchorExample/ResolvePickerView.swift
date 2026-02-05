@@ -119,16 +119,30 @@ struct ResolvePickerView: View {
         }
         .frame(width: 295, height: 150)
       }
-      Button {
-        manager.resolveButtonPressed(anchorIds: anchorIds)
-      } label: {
-        Text("Resolve")
-          .font(.system(size: 20))
-          .frame(width: 175)
-          .foregroundStyle(.white)
+      HStack(spacing: 15) {
+        Button {
+          manager.resolveButtonPressed(anchorIds: anchorIds, drawLines: false)
+        } label: {
+          Text("Resolve")
+            .font(.system(size: 20))
+            .frame(width: 140)
+            .foregroundStyle(.white)
+        }
+        .disabled(anchorIdsField.isEmpty && anchorIdSelection.isEmpty)
+        .buttonStyle(.borderedProminent)
+        
+        Button {
+          manager.resolveButtonPressed(anchorIds: anchorIds, drawLines: true)
+        } label: {
+          Text("Draw Lines")
+            .font(.system(size: 20))
+            .frame(width: 140)
+            .foregroundStyle(.white)
+        }
+        .disabled(anchorIdsField.isEmpty && anchorIdSelection.isEmpty)
+        .buttonStyle(.borderedProminent)
+        .tint(.purple)
       }
-      .disabled(anchorIdsField.isEmpty && anchorIdSelection.isEmpty)
-      .buttonStyle(.borderedProminent)
     }
     .onAppear {
       // Refresh anchor info every time the view appears on screen.
