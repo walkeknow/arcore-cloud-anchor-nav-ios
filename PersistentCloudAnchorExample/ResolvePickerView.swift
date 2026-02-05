@@ -24,6 +24,7 @@ struct ResolvePickerView: View {
   @State private var anchorIdSelection = Set<String>()
   @State private var anchorIdsField = ""
   @State private var anchorInfos = [AnchorInfo]()
+  @State private var isLoadingFromFirebase = false
 
   private var anchorIds: [String] {
     if !anchorIdsField.isEmpty {
@@ -44,10 +45,26 @@ struct ResolvePickerView: View {
   }
 
   private func updateAnchorInfos() {
+    // Fetch from local storage first
     anchorInfos = manager.fetchAndPruneAnchors()
-    // Remove any anchor IDs from selection that are no longer in the list.
-    anchorIdSelection = Set<String>(
-      anchorInfos.map({ $0.id }).filter({ anchorIdSelection.contains($0) }))
+    
+    // Then fetch from Firebase
+    isLoadingFromFirebase = true
+    manager.fetchAnchorsFromFirebase { firebaseAnchors in
+      // Merge with local anchors, removing duplicates
+      let localIds = Set(anchorInfos.map { $0.id })
+      let newAnchors = firebaseAnchors.filter { !localIds.contains($0.id) }
+      anchorInfos.append(contentsOf: newAnchors)
+      
+      // Sort by name
+      anchorInfos.sort { $0.name < $1.name }
+      
+      isLoadingFromFirebase = false
+      
+      // Remove any anchor IDs from selection that are no longer in the list.
+      anchorIdSelection = Set<String>(
+        anchorInfos.map({ $0.id }).filter({ anchorIdSelection.contains($0) }))
+    }
   }
 
   var body: some View {
@@ -59,9 +76,13 @@ struct ResolvePickerView: View {
         .frame(width: 195, height: 41)
         .font(.system(size: 17))
         .multilineTextAlignment(.center)
-      Text("Select from anchors previously hosted from this device")
+      Text("Select from anchors (local + Firebase)")
         .frame(width: 295, height: 42)
         .font(.system(size: 14))
+      if isLoadingFromFirebase {
+        ProgressView("Loading from Firebase...")
+          .frame(height: 30)
+      }
       DisclosureGroup(
         isExpanded: $expanded,
         content: {},

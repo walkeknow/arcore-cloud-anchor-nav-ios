@@ -18,6 +18,7 @@ import ARCore
 import ARKit
 import RealityKit
 import simd
+import FirebaseDatabase
 
 /// Model object for hosting and resolving Cloud Anchors.
 class CloudAnchorManager: ObservableObject {
@@ -67,6 +68,12 @@ class CloudAnchorManager: ObservableObject {
 
   var garSession: GARSession?
   private var arView: ARView?
+  private var databaseRef: DatabaseReference?
+
+  init() {
+    // Initialize Firebase Database reference
+    databaseRef = Database.database().reference()
+  }
 
   private func createGARSession() -> Bool {
     do {
@@ -269,6 +276,82 @@ class CloudAnchorManager: ObservableObject {
     UserDefaults.standard.setValue(timeDictionary, forKey: Constants.timeDictionaryUserDefaultsKey)
     UserDefaults.standard.setValue(
       anchorIdDictionary, forKey: Constants.anchorIdDictionaryUserDefaultsKey)
+    
+    // Save to Firebase Realtime Database
+    saveAnchorToFirebase(anchorId: anchorId, name: anchorNameDialogField)
+  }
+  
+  /// Saves the anchor to Firebase Realtime Database
+  private func saveAnchorToFirebase(anchorId: String, name: String) {
+    guard let databaseRef else { return }
+    
+    let anchorData: [String: Any] = [
+      "anchorId": anchorId,
+      "name": name,
+      "timestamp": ServerValue.timestamp()
+    ]
+    
+    // Save under /cloudAnchors/{anchorId}
+    databaseRef.child("cloudAnchors").child(anchorId).setValue(anchorData) { error, _ in
+      if let error = error {
+        print("Failed to save anchor to Firebase: \(error.localizedDescription)")
+      } else {
+        print("Successfully saved anchor \(anchorId) to Firebase")
+      }
+    }
+  }
+  
+  /// Fetches all cloud anchors from Firebase
+  func fetchAnchorsFromFirebase(completion: @escaping ([AnchorInfo]) -> Void) {
+    guard let databaseRef else {
+      completion([])
+      return
+    }
+    
+    databaseRef.child("cloudAnchors").observeSingleEvent(of: .value) { snapshot in
+      var anchors: [AnchorInfo] = []
+      
+      for child in snapshot.children {
+        guard let snapshot = child as? DataSnapshot,
+              let value = snapshot.value as? [String: Any],
+              let anchorId = value["anchorId"] as? String,
+              let name = value["name"] as? String,
+              let timestamp = value["timestamp"] as? Double else {
+          continue
+        }
+        
+        // Calculate age
+        let now = Date().timeIntervalSince1970 * 1000 // Convert to milliseconds
+        let timeInterval = (now - timestamp) / 1000 // Convert back to seconds
+        
+        // Skip anchors older than 1 day
+        if timeInterval >= 86400 {
+          continue
+        }
+        
+        let age = timeInterval >= 3600
+          ? "\(Int(floor(timeInterval / 3600)))h"
+          : "\(Int(floor(timeInterval / 60)))m"
+        
+        anchors.append(AnchorInfo(id: anchorId, name: name, age: age))
+      }
+      
+      // Sort by newest first
+      completion(anchors)
+    }
+  }
+  
+  /// Deletes an anchor from Firebase
+  func deleteAnchorFromFirebase(anchorId: String) {
+    guard let databaseRef else { return }
+    
+    databaseRef.child("cloudAnchors").child(anchorId).removeValue { error, _ in
+      if let error = error {
+        print("Failed to delete anchor from Firebase: \(error.localizedDescription)")
+      } else {
+        print("Successfully deleted anchor \(anchorId) from Firebase")
+      }
+    }
   }
 
   /// Gets the list of stored anchors, sorted by age, and removes any more than a day old.
